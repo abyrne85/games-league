@@ -1,17 +1,17 @@
 export interface IGame {
-    id: number;
+    id?: number;
     name: string;
     nickName: string; 
 }
 
 export interface IPlayer {
-    id: number;
+    id?: number;
     name: string;
     image: string;
 }
 
 export interface IRound {
-    id: number;
+    id?: number;
     players: IPlayer[];
     winner: IPlayer;
     runnerUp?: IPlayer;

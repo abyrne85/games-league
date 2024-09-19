@@ -97,8 +97,8 @@ app.get('/games', async (req, res) => {
 
 app.post('/rounds', async (req, res) => {
     try {
-        const { content } = req.body;
-        await Round.create({ content });
+        const { players, winner, runnerUp, game, date } = req.body;
+        await Round.create({ players, winner, runnerUp, game, date });
         res.json('Round saved successfully');
     } catch (error) {
         res.status(500).json({ error: 'Error saving round' });
