@@ -1,0 +1,72 @@
+<form class="max-w-lg mx-auto mt-8">
+    <h2 class="text-2xl font-bold mb-6">New Game</h2>
+
+    
+    <!-- Players -->
+    <div class="mb-6">
+        <h3 class="text-xl font-semibold mb-3">Players</h3>
+        <div class="space-y-4">
+            <div *ngFor="let player of players"
+                class="flex items-center">
+                <input type="checkbox"
+                    [id]="'player-' + player.id"
+                    [name]="'player-' + player.id"
+                    [checked]="player.selected"
+                    class="mr-2">
+                <label [for]="'player-' + player.id">{{ player.name }}</label>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Winner -->
+    <div class="mb-6">
+        <label for="winner"
+            class="block mb-1">Winner</label>
+        <select id="winner"
+            name="winner"
+            class="w-full px-3 py-2 border rounded-md">
+            <option value="">Select Winner</option>
+            <option *ngFor="let player of selectedPlayers" [value]="player.id">
+                {{ player.name }}
+            </option>
+        </select>
+    </div>
+
+    <!-- Runner Up -->
+    <div class="mb-6">
+        <label for="runnerUp"
+            class="block mb-1">Runner Up</label>
+        <select id="runnerUp"
+            name="runnerUp"
+            class="w-full px-3 py-2 border rounded-md">
+            <option value="">Select Runner Up</option>
+            <!-- Add options dynamically based on entered players -->
+        </select>
+    </div>
+
+    <!-- Game -->
+    <div class="mb-6">
+        <label for="game"
+            class="block mb-1">Game</label>
+        <select id="game"
+            name="game"
+            class="w-full px-3 py-2 border rounded-md">
+            <option value="">Select Game</option>
+            <!-- Add game options dynamically -->
+        </select>
+    </div>
+
+    <!-- Date -->
+    <div class="mb-6">
+        <label for="date"
+            class="block mb-1">Date</label>
+        <input type="date"
+            id="date"
+            name="date"
+            class="w-full px-3 py-2 border rounded-md">
+    </div>
+
+    <button type="submit"
+        class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit</button>
+</form>
