@@ -1,109 +1,97 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { Sequelize, DataTypes } = require('sequelize');
-
 const app = express();
-const port = process.env.PORT || 3000;
-
-// SQLite database setup
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: './database.sqlite'
-});
+const port = process.env.PORT || 8080;
+const path = require('path');
+const fs = require('fs');
 
 
-// Define the Game model
-const Game = sequelize.define('Game', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    nickName: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-});
-
-
-// Define the Player model
-const Player = sequelize.define('Player', {
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    image: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-});
-
-
-// Define the Round model
-const Round = sequelize.define('Round', {
-    date: {
-        type: DataTypes.DATE,
-        allowNull: false
-    }
-});
-
-// Define associations
-Round.belongsTo(Game);
-Round.belongsToMany(Player, { through: 'RoundPlayers' });
-Round.belongsTo(Player, { as: 'winner' });
-Round.belongsTo(Player, { as: 'runnerUp' });
-
-
-// Sync the model with the database
-sequelize.sync();
-
-app.use(cors({
-    origin: 'http://localhost:4200'
-}));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/rounds', async (req, res) => {
-    try {
-        const rounds = await Round.findAll();
-        res.json(rounds);
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching rounds' });
-    }
-});
+// Serve static files from the Angular app
+app.use(express.static(path.join(__dirname, '../dist/games-league')));
 
-app.get('/players', async (req, res) => {
+
+app.get('/api/players', async (req, res) => {
+    
     try {
-        const players = await Player.findAll();
+        const fs = require('fs');
+        const path = require('path');
+        const playersData = fs.readFileSync(path.join(__dirname, 'data', 'players.json'), 'utf8');
+        const players = JSON.parse(playersData);
         res.json(players);
     } catch (error) {
+        console.error('Error reading players data:', error);
         res.status(500).json({ error: 'Error fetching players' });
     }
 });
 
-app.get('/games', async (req, res) => {
+app.get('/api/games', async (req, res) => {
     try {
-        const games = await Game.findAll();
+        const fs = require('fs');
+        const path = require('path');
+        const gamesData = fs.readFileSync(path.join(__dirname, 'data', 'games.json'), 'utf8');
+        const games = JSON.parse(gamesData);
         res.json(games);
     } catch (error) {
+        console.error('Error reading games data:', error);
         res.status(500).json({ error: 'Error fetching games' });
     }
 });
 
-app.post('/rounds', async (req, res) => {
+app.get('/api/rounds', async (req, res) => {
     try {
-        const { players, winner, runnerUp, game, date } = req.body;
-        await Round.create({ players, winner, runnerUp, game, date });
-        res.json('Round saved successfully');
+        const fs = require('fs');
+        const path = require('path');
+        const roundsData = fs.readFileSync(path.join(__dirname, 'data', 'rounds.json'), 'utf8');
+        const rounds = JSON.parse(roundsData);
+        res.json(rounds);   
     } catch (error) {
-        res.status(500).json({ error: 'Error saving round' });
+        console.error('Error reading rounds data:', error);
+        res.status(500).json({ error: 'Error fetching rounds' });
     }
 });
+
+app.post('/api/rounds', async (req, res) => {
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        const roundsFilePath = path.join(__dirname, 'data', 'rounds.json');
+
+        // Read existing rounds
+        const roundsData = fs.readFileSync(roundsFilePath, 'utf8');
+        const rounds = JSON.parse(roundsData);
+
+        // Generate a new ID
+        const newId = rounds.length > 0 ? Math.max(...rounds.map(r => r.id)) + 1 : 1;
+
+        // Create new round object
+        const newRound = {
+            id: newId,
+            ...req.body
+        };
+
+        // Add new round to the array
+        rounds.push(newRound);
+
+        // Write updated rounds back to file
+        fs.writeFileSync(roundsFilePath, JSON.stringify(rounds, null, 4));
+
+        res.status(201).json(newRound);
+    } catch (error) {
+        console.error('Error adding new round:', error);
+        res.status(500).json({ error: 'Error adding new round' });
+    }
+});
+
+// For any other routes, send the index.html file from Angular
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/games-league/index.html'));
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

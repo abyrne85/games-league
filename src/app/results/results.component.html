@@ -1,1 +1,8 @@
-<p>results works!</p>
+
+<div class="flex flex-col gap-4 my-4">
+    <app-league-table *ngIf="rounds.length > 0" [rounds]="rounds" [players]="players"></app-league-table>
+</div>
+
+<!-- <div *ngFor="let round of rounds">
+    <app-round-card [round]="round" [games]="games" [players]="players"></app-round-card>
+</div> -->

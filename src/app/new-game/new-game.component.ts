@@ -2,8 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IGame, IPlayer, IRound } from '../models';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, map, Observable } from 'rxjs';
+import { GamesService } from '../games.service';
 
 @Component({
   selector: 'app-new-game',
@@ -15,14 +16,12 @@ import { forkJoin, map, Observable } from 'rxjs';
 export class NewGameComponent implements OnInit {
     games: IGame[] = [];
     players: (IPlayer & { selected: boolean })[] = [];
-    winner: IPlayer | undefined = undefined;
-    runnerUp: IPlayer | undefined = undefined;
+    winner!: IPlayer;
+    game!: IGame;
+    runnerUp!: IPlayer;
     date: string = new Date().toISOString().split('T')[0];
-    game: IGame | undefined = undefined;
 
-    private _fb = inject(FormBuilder);
-    private _http = inject(HttpClient);
-    
+    private _gamesService = inject(GamesService);
     ngOnInit(): void {
         this._getGamesAndPlayers().subscribe(({ games, players }) => {
             this.games = games;
@@ -31,16 +30,15 @@ export class NewGameComponent implements OnInit {
     }
 
     onSubmit(): void {
-        console.log(this.winner);
         const round: IRound = {
-            players: this.selectedPlayers,
-            winner: this.winner!,
-            runnerUp: this.runnerUp || undefined,
-            game: this.game!,
+            playerIds: this.selectedPlayers.map(player => player.id!),
+            winnerId: this.winner.id!,
+            runnerUpId: this.runnerUp.id!,
+            gameId: this.game.id!,
             date: this.date
         };
 
-        this._http.post('http://localhost:3000/rounds', round).subscribe(() => {
+        this._gamesService.addRound(round).subscribe(() => {
             console.log('Round saved successfully');
         });
     }
@@ -51,8 +49,8 @@ export class NewGameComponent implements OnInit {
 
     private _getGamesAndPlayers(): Observable<{ games: IGame[]; players: (IPlayer & { selected: boolean })[]; }> {
         return forkJoin({
-            games: this._http.get<IGame[]>('http://localhost:3000/games'),
-            players: this._http.get<IPlayer[]>('http://localhost:3000/players')
+            games: this._gamesService.getGames(),
+            players: this._gamesService.getPlayers()
         }).pipe(
             map(({ games, players }) => {
                 this.games = games;

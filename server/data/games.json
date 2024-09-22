@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Settlers of Catan",
+        "nickName": "Catan"
+    },
+    {
+        "id": 2,
+        "name": "Wingspan",
+        "nickName": "Birds"
+    },
+    {
+        "id": 3,
+        "name": "Viticulture",
+        "nickName": "Wine"
+    },
+    {
+        "id": 4,
+        "name": "Ticket to Ride",
+        "nickName": "Trains"
+    }
+]

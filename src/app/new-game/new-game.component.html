@@ -1,4 +1,6 @@
 <form class="max-w-lg mx-auto mt-8">
+
+
     <!-- Players -->
     <div class="mb-6">
         <h3 class="text-xl font-semibold mb-3">Players</h3>
@@ -14,7 +16,21 @@
             </div>
         </div>
     </div>
+    <!-- Game -->
+    <div class="mb-6">
+        <label for="game"
+            class="block mb-1">Game</label>
+        <select id="game"
+            name="game"
+            [(ngModel)]="game"
+            class="w-full px-3 py-2 border rounded-md">
 
+            <option *ngFor="let game of games"
+                [ngValue]="game">
+                {{ game.name }}
+            </option>
+        </select>
+    </div>
     <!-- Winner -->
     <div class="mb-6">
         <label for="winner"
@@ -23,9 +39,6 @@
             name="winner"
             [(ngModel)]="winner"
             class="w-full px-3 py-2 border rounded-md">
-            <option [ngValue]="null"
-                disabled
-                selected>Select Winner</option>
 
             <option *ngFor="let player of selectedPlayers"
                 [ngValue]="player">
@@ -42,32 +55,10 @@
             name="runnerUp"
             [(ngModel)]="runnerUp"
             class="w-full px-3 py-2 border rounded-md">
-            <option [ngValue]="null"
-                disabled
-                selected>Select Runner Up</option>
 
             <option *ngFor="let player of selectedPlayers"
                 [ngValue]="player">
                 {{ player.name }}
-            </option>
-        </select>
-    </div>
-
-    <!-- Game -->
-    <div class="mb-6">
-        <label for="game"
-            class="block mb-1">Game</label>
-        <select id="game"
-            name="game"
-            [(ngModel)]="game"
-            class="w-full px-3 py-2 border rounded-md">
-            <option [ngValue]="null"
-                disabled
-                selected>Select Game</option>
-
-            <option *ngFor="let game of games"
-                [ngValue]="game">
-                {{ game.name }}
             </option>
         </select>
     </div>
@@ -85,5 +76,6 @@
 
     <button type="submit"
         (click)="onSubmit()"
+        [disabled]="!winner || !game || !date"
         class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit</button>
 </form>

@@ -1,0 +1,19 @@
+<div class="round-card">
+    <h2>{{ game.name }}</h2>
+    <h3>{{ round.date }}</h3>
+    <ul>
+        <li>
+            <span>(Winner)</span>
+            {{ winner.name }}
+        </li>
+        <li>
+            <span>(Runner-up)</span>
+            {{ runnerUp.name }}
+        </li>
+        <li *ngFor="let player of presentPlayers">
+            <ng-container *ngIf="player.id !== winner.id && player.id !== runnerUp.id">
+                {{ player.name }}
+            </ng-container>
+        </li>
+    </ul>
+</div>

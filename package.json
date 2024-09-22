@@ -4,11 +4,15 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "server": "node server/server.js",
-    "dev": "concurrently \"npm run start\" \"npm run server\""
+    "dev": "concurrently \"npm run start\" \"npm run server\"",
+    "docker:build": "docker build -t games-league .",
+    "docker:run": "docker run -p 8080:80 games-league",
+    "build:prod": "ng build --configuration production",
+    "start:prod": "node server/server.js"
   },
   "private": true,
   "dependencies": {
@@ -27,9 +31,10 @@
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^15.2.4",
+    "@angular-devkit/build-angular": "^15.0.0",
     "@angular/cli": "~15.2.4",
     "@angular/compiler-cli": "^15.2.0",
+    "@flydotio/dockerfile": "^0.5.8",
     "@types/jasmine": "~4.3.0",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.0.1",

@@ -1,0 +1,55 @@
+[
+    {
+        "id": 1,
+        "playerIds": [
+            1,
+            2,
+            3,
+            5
+        ],
+        "winnerId": 1,
+        "runnerUpId": 2,
+        "gameId": 1,
+        "date": "2024-01-01"
+    },
+    {
+        "id": 2,
+        "playerIds": [
+            1,
+            4,
+            5
+        ],
+        "winnerId": 2,
+        "runnerUpId": 3,
+        "gameId": 1,
+        "date": "2024-01-01"
+    },
+    {
+        "id": 3,
+        "playerIds": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ],
+        "winnerId": 2,
+        "runnerUpId": 1,
+        "gameId": 2,
+        "date": "2024-09-22"
+    },
+    {
+        "id": 4,
+        "playerIds": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ],
+        "winnerId": 2,
+        "runnerUpId": 3,
+        "gameId": 3,
+        "date": "2024-09-22"
+    }
+]
