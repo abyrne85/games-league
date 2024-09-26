@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IGame, IPlayer, IRound } from '../models';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, map, Observable } from 'rxjs';
 import { GamesService } from '../games.service';

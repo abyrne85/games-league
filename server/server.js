@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 8080;
+const host = '0.0.0.0';
 const path = require('path');
 const fs = require('fs');
 
@@ -18,8 +19,6 @@ app.use(express.static(path.join(__dirname, '../dist/games-league')));
 app.get('/api/players', async (req, res) => {
     
     try {
-        const fs = require('fs');
-        const path = require('path');
         const playersData = fs.readFileSync(path.join(__dirname, 'data', 'players.json'), 'utf8');
         const players = JSON.parse(playersData);
         res.json(players);
@@ -93,6 +92,6 @@ app.get('*', (req, res) => {
 });
 
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(port, host, () => {
+    console.log(`Server is running on http://${host}:${port}`);
 });
