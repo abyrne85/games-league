@@ -2,10 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 const host = '0.0.0.0';
 const path = require('path');
 const fs = require('fs');
+const { MongoClient, ServerApiVersion, Db } = require('mongodb');
 
 
 app.use(cors());
@@ -16,15 +17,39 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../dist/games-league')));
 
 
+const uri = "mongodb+srv://abyrne85:TheRange1!2@gamesboysandgirls.d32jj.mongodb.net/?retryWrites=true&w=majority&appName=GamesBoysAndGirls";
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
+
+
 app.get('/api/players', async (req, res) => {
-    
     try {
-        const playersData = fs.readFileSync(path.join(__dirname, 'data', 'players.json'), 'utf8');
-        const players = JSON.parse(playersData);
+        await client.connect();
+        const database = client.db("gamesboys");
+        const players = await database.collection("players").find({}).toArray();
+        await client.close();
         res.json(players);
     } catch (error) {
         console.error('Error reading players data:', error);
         res.status(500).json({ error: 'Error fetching players' });
+    }
+});
+
+app.post('/api/games', async (req, res) => {
+    try {
+        await client.connect();
+        const database = client.db("gamesboys");
+        const game = await database.collection("games").insertOne(req.body);
+        await client.close();
+        res.json(game);
+    } catch (error) {
+        console.error('Error adding new player:', error);
+        res.status(500).json({ error: 'Error adding new player' });
     }
 });
 
