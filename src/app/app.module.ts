@@ -17,7 +17,8 @@ import { NewGameComponent } from './new-game/new-game.component';
     HttpClientModule,
     FormsModule,
     ResultsComponent,
-    NewGameComponent
+    NewGameComponent,
+  
   ],
   providers: [],
   bootstrap: [AppComponent]
