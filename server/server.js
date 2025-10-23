@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -14,8 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the Angular app
 app.use(express.static(path.join(__dirname, '../dist/games-league')));
 
-
-const uri = "mongodb+srv://abyrne85:TheRange1!2@gamesboysandgirls.d32jj.mongodb.net/?retryWrites=true&w=majority&appName=GamesBoysAndGirls";
+const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/games-league";
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -38,7 +38,6 @@ async function connectToDatabase() {
     }
 }
 
-
 app.get('/api/players', async (req, res) => {
     try {
         const players = await database.collection("players").find({}).toArray();
@@ -51,7 +50,9 @@ app.get('/api/players', async (req, res) => {
 
 app.post('/api/games', async (req, res) => {
     try {
-        const game = await database.collection("games").insertOne(req.body);
+        const result = await database.collection("games").insertOne(req.body);
+        const game = await database.collection("games").findOne({ _id: result.insertedId });
+        console.log('Game added:', game);
         res.json(game);
     } catch (error) {
         console.error('Error adding new game:', error);

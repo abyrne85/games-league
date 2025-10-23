@@ -1,15 +1,18 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IGame, IPlayer, IRound } from '../models';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, map, Observable } from 'rxjs';
 import { GamesService } from '../games.service';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
     selector: 'app-new-round',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, DropdownModule],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DatePickerModule, DialogModule, InputTextModule],
     templateUrl: './new-round.component.html',
     styleUrls: ['./new-round.component.scss']
 })
@@ -21,6 +24,10 @@ export class NewRoundComponent implements OnInit {
     game!: IGame;
     runnerUp!: IPlayer;
     date: string = new Date().toISOString().split('T')[0];
+    showAddGameModal = signal(false);
+    addGameForm = new FormGroup({
+        newGameName: new FormControl('')
+    });
 
     private _gamesService = inject(GamesService);
 
@@ -31,11 +38,13 @@ export class NewRoundComponent implements OnInit {
         });
     }
 
-    addGame(): void {
-        console.log('add game');
-        // this._gamesService.addGame(this.game).subscribe(() => {
-        //     console.log('Game saved successfully');
-        // });
+    onAddGame(): void {
+        const gameName = this.addGameForm.value.newGameName || '';
+        this._gamesService.addGame({ name: gameName }).subscribe((res) => {
+            console.log(res);
+            this.games.push(res);
+            this.showAddGameModal.set(false);
+        });
     }
 
     onMultiSelectClick(evt: Event) {

@@ -33,4 +33,8 @@ export class GamesService {
     addRound(round: any) {
         return this.http.post<IRound>('/api/rounds', round);
     }
+
+    addGame(game: Partial<IGame>) {
+        return this.http.post<IGame>('/api/games', game);
+    }
 }

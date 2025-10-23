@@ -1,7 +1,6 @@
 export interface IGame {
     id: number;
     name: string;
-    nickName: string; 
 }
 
 export interface IPlayer {

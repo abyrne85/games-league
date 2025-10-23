@@ -1,83 +1,56 @@
-<form class="max-w-lg mx-auto mt-8">
+<form class="max-w-lg mx-auto mt-8 px-4">
 
 
     <!-- Players -->
     <div class="mb-6">
-        <p-multiSelect [options]="players"
+        <p-multiselect [options]="players"
             [(ngModel)]="selectedPlayers"
-            name="selectedPlayers"
             optionLabel="name"
+            name="selectedPlayers"
             placeholder="Players"
-            [filter]="false"
+            [maxSelectedLabels]="5"
             [style]="{'width': '100%'}"
-            [panelStyle]="{'width': '100%'}"
-            [appendTo]="'body'"
-            (onClick)="onMultiSelectClick($event)"
-            (onPanelShow)="onPanelShow()" />
+            [panelStyle]="{'width': '100%'}" />
 
     </div>
     <!-- Game -->
-    <div class="mb-6">
-        <label for="game"
-            class="block mb-1">Game</label>
-        <div class="flex items-center">
-            <select id="game"
-                name="game"
-                [(ngModel)]="game"
-                class="w-full px-3 py-2 border rounded-md mr-2">
-                <option *ngFor="let game of games"
-                    [ngValue]="game">
-                    {{ game.name }}
-                </option>
-            </select>
-            <button type="button" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-md" (click)="addGame()">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        </div>
+    <div class="mb-6 flex gap-4">
+        <p-select [options]="games"
+            [(ngModel)]="game"
+            optionLabel="name"
+            name="game"
+            placeholder="Game"
+            class="w-3/4" />
+        <button type="button"
+            class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-md w-1/4"
+            (click)="showAddGameModal.set(true)">Add Game</button>
     </div>
     <!-- Winner -->
     <div class="mb-6">
-        <label for="winner"
-            class="block mb-1">Winner</label>
-        <select id="winner"
-            name="winner"
+        <p-select [options]="selectedPlayers"
             [(ngModel)]="winner"
-            class="w-full px-3 py-2 border rounded-md">
-
-            <option *ngFor="let player of selectedPlayers"
-                [ngValue]="player">
-                {{ player.name }}
-            </option>
-        </select>
+            optionLabel="name"
+            name="winner"
+            placeholder="Winner"
+            class="w-full" />
     </div>
 
     <!-- Runner Up -->
     <div class="mb-6">
-        <label for="runnerUp"
-            class="block mb-1">Runner Up</label>
-        <select id="runnerUp"
-            name="runnerUp"
+        <p-select [options]="selectedPlayers"
             [(ngModel)]="runnerUp"
-            class="w-full px-3 py-2 border rounded-md">
-
-            <option *ngFor="let player of selectedPlayers"
-                [ngValue]="player">
-                {{ player.name }}
-            </option>
-        </select>
+            optionLabel="name"
+            name="runnerUp"
+            placeholder="Runner Up"
+            class="w-full" />
     </div>
 
     <!-- Date -->
     <div class="mb-6">
-        <label for="date"
-            class="block mb-1">Date</label>
-        <input type="date"
-            id="date"
+        <p-datepicker [(ngModel)]="date"
             name="date"
-            [(ngModel)]="date"
-            class="w-full px-3 py-2 border rounded-md">
+            placeholder="Date"
+            class="w-full" />
     </div>
 
     <button type="submit"
@@ -85,3 +58,21 @@
         [disabled]="!winner || !game || !date"
         class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit</button>
 </form>
+
+
+<p-dialog header="Edit Profile"
+    [modal]="true"
+    [(visible)]="showAddGameModal"
+    [style]="{ width: '25rem' }">
+    <form [formGroup]="addGameForm" (ngSubmit)="onAddGame()">
+        <span class="p-text-secondary block mb-8">Add a new game.</span>
+        <div class="flex items-center gap-4 mb-4">
+            <input pInputText
+                formControlName="newGameName"
+                class="flex-auto"
+                autocomplete="off" />
+        </div>
+        <button type="submit"
+            class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-md w-full">Add Game</button>
+    </form>
+</p-dialog>

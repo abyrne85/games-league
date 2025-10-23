@@ -5,6 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
 
 @NgModule({
   declarations: [
@@ -14,9 +18,18 @@ import { AppComponent } from './app.component';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    MultiSelectModule
   ],
-  providers: [provideHttpClient()],
+  providers: [
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    }),
+    provideHttpClient(),
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
