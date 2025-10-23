@@ -8,11 +8,10 @@ import { GamesService } from '../games.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-results',
-  standalone: true,
-  imports: [CommonModule, RoundCardComponent, LeagueTableComponent],
-  templateUrl: './results.component.html',
-  styleUrls: ['./results.component.scss']
+    selector: 'app-results',
+    imports: [CommonModule, RoundCardComponent, LeagueTableComponent],
+    templateUrl: './results.component.html',
+    styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent implements OnInit {
 

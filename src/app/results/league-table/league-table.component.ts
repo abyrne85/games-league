@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { IRound, IPlayer } from '../../models';
 
 @Component({
-  selector: 'app-league-table',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './league-table.component.html',
-  styleUrls: ['./league-table.component.scss']
+    selector: 'app-league-table',
+    imports: [CommonModule],
+    templateUrl: './league-table.component.html',
+    styleUrls: ['./league-table.component.scss']
 })
 export class LeagueTableComponent {
     @Input() rounds: IRound[] = [];

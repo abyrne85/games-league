@@ -7,11 +7,10 @@ import { GamesService } from '../games.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
-  selector: 'app-new-game',
-  standalone: true,
-imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule],
-  templateUrl: './new-game.component.html',
-  styleUrls: ['./new-game.component.scss']
+    selector: 'app-new-game',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule],
+    templateUrl: './new-game.component.html',
+    styleUrls: ['./new-game.component.scss']
 })
 export class NewGameComponent implements OnInit {
     games: IGame[] = [];
