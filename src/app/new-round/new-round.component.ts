@@ -5,14 +5,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, map, Observable } from 'rxjs';
 import { GamesService } from '../games.service';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
-    selector: 'app-new-game',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule],
-    templateUrl: './new-game.component.html',
-    styleUrls: ['./new-game.component.scss']
+    selector: 'app-new-round',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, DropdownModule],
+    templateUrl: './new-round.component.html',
+    styleUrls: ['./new-round.component.scss']
 })
-export class NewGameComponent implements OnInit {
+export class NewRoundComponent implements OnInit {
     games: IGame[] = [];
     players!: IPlayer[];
     selectedPlayers!: IPlayer[];

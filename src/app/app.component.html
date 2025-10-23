@@ -4,10 +4,10 @@
             class="text-white text-xl font-bold">Games League</a>
         <ul class="flex space-x-4">
             <li>
-                <a routerLink="/new-game"
+                <a routerLink="/new-round"
                     routerLinkActive="text-yellow-300"
                     [routerLinkActiveOptions]="{exact: true}"
-                    class="text-white hover:text-gray-300 pb-1">New Game</a>
+                    class="text-white hover:text-gray-300 pb-1">New Round</a>
             </li>
             <li>
                 <a routerLink="/results"
@@ -18,13 +18,6 @@
         </ul>
     </div>
 </nav>
-
-    <button pButton
-        pRipple
-        label="Delete"
-        icon="pi pi-trash"
-        class="p-button-danger"
-        (click)="clickBtn()"></button>
 
 <div class="container mx-auto">
     <router-outlet></router-outlet>
