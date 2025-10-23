@@ -5,9 +5,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const host = '0.0.0.0';
 const path = require('path');
-const fs = require('fs');
-const { MongoClient, ServerApiVersion, Db } = require('mongodb');
-
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,13 +24,24 @@ const client = new MongoClient(uri, {
     }
 });
 
+let database;
+
+// Connect to MongoDB once when server starts
+async function connectToDatabase() {
+    try {
+        await client.connect();
+        database = client.db("gamesboys");
+        console.log("Connected to MongoDB successfully");
+    } catch (error) {
+        console.error("Failed to connect to MongoDB:", error);
+        process.exit(1);
+    }
+}
+
 
 app.get('/api/players', async (req, res) => {
     try {
-        await client.connect();
-        const database = client.db("gamesboys");
         const players = await database.collection("players").find({}).toArray();
-        await client.close();
         res.json(players);
     } catch (error) {
         console.error('Error reading players data:', error);
@@ -42,23 +51,17 @@ app.get('/api/players', async (req, res) => {
 
 app.post('/api/games', async (req, res) => {
     try {
-        await client.connect();
-        const database = client.db("gamesboys");
         const game = await database.collection("games").insertOne(req.body);
-        await client.close();
         res.json(game);
     } catch (error) {
-        console.error('Error adding new player:', error);
-        res.status(500).json({ error: 'Error adding new player' });
+        console.error('Error adding new game:', error);
+        res.status(500).json({ error: 'Error adding new game' });
     }
 });
 
 app.get('/api/games', async (req, res) => {
     try {
-        const fs = require('fs');
-        const path = require('path');
-        const gamesData = fs.readFileSync(path.join(__dirname, 'data', 'games.json'), 'utf8');
-        const games = JSON.parse(gamesData);
+        const games = await database.collection("games").find({}).toArray();
         res.json(games);
     } catch (error) {
         console.error('Error reading games data:', error);
@@ -68,10 +71,7 @@ app.get('/api/games', async (req, res) => {
 
 app.get('/api/rounds', async (req, res) => {
     try {
-        const fs = require('fs');
-        const path = require('path');
-        const roundsData = fs.readFileSync(path.join(__dirname, 'data', 'rounds.json'), 'utf8');
-        const rounds = JSON.parse(roundsData);
+        const rounds = await database.collection("rounds").find({}).toArray();
         res.json(rounds);   
     } catch (error) {
         console.error('Error reading rounds data:', error);
@@ -81,30 +81,8 @@ app.get('/api/rounds', async (req, res) => {
 
 app.post('/api/rounds', async (req, res) => {
     try {
-        const fs = require('fs');
-        const path = require('path');
-        const roundsFilePath = path.join(__dirname, 'data', 'rounds.json');
-
-        // Read existing rounds
-        const roundsData = fs.readFileSync(roundsFilePath, 'utf8');
-        const rounds = JSON.parse(roundsData);
-
-        // Generate a new ID
-        const newId = rounds.length > 0 ? Math.max(...rounds.map(r => r.id)) + 1 : 1;
-
-        // Create new round object
-        const newRound = {
-            id: newId,
-            ...req.body
-        };
-
-        // Add new round to the array
-        rounds.push(newRound);
-
-        // Write updated rounds back to file
-        fs.writeFileSync(roundsFilePath, JSON.stringify(rounds, null, 4));
-
-        res.status(201).json(newRound);
+        const round = await database.collection("rounds").insertOne(req.body);
+        res.json(round);
     } catch (error) {
         console.error('Error adding new round:', error);
         res.status(500).json({ error: 'Error adding new round' });
@@ -117,6 +95,25 @@ app.get('*', (req, res) => {
 });
 
 
-app.listen(port, host, () => {
-    console.log(`Server is running on http://${host}:${port}`);
+// Start the server
+async function startServer() {
+    await connectToDatabase();
+    app.listen(port, host, () => {
+        console.log(`Server is running on http://${host}:${port}`);
+    });
+}
+
+startServer().catch(console.error);
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+    console.log('Shutting down gracefully...');
+    await client.close();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    console.log('Shutting down gracefully...');
+    await client.close();
+    process.exit(0);
 });
