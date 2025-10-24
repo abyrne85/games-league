@@ -1,33 +1,31 @@
-<form class="max-w-lg mx-auto mt-8 px-4">
+<form class="max-w-lg mx-auto mt-8">
 
 
     <!-- Players -->
     <div class="mb-6">
-        <p-multiselect [options]="players"
-            [(ngModel)]="selectedPlayers"
-            optionLabel="name"
-            name="selectedPlayers"
-            placeholder="Players"
-            [maxSelectedLabels]="5"
-            [style]="{'width': '100%'}"
-            [panelStyle]="{'width': '100%'}" />
+
+<p-listbox [(ngModel)]="selectedPlayers"
+    name="selectedPlayers"
+    [options]="players()"
+    [multiple]="true"
+    optionLabel="name"
+    class="w-full" />
 
     </div>
     <!-- Game -->
     <div class="mb-6 flex gap-4">
-        <p-select [options]="games"
+        <p-select [options]="games()"
             [(ngModel)]="game"
             optionLabel="name"
             name="game"
             placeholder="Game"
             class="w-3/4" />
-        <button type="button"
-            class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-md w-1/4"
-            (click)="showAddGameModal.set(true)">Add Game</button>
+        <p-button label="Add Game" type="button"
+            (click)="showAddGameModal.set(true)" />
     </div>
     <!-- Winner -->
     <div class="mb-6">
-        <p-select [options]="selectedPlayers"
+        <p-select [options]="selectedPlayers()"
             [(ngModel)]="winner"
             optionLabel="name"
             name="winner"
@@ -37,8 +35,9 @@
 
     <!-- Runner Up -->
     <div class="mb-6">
-        <p-select [options]="selectedPlayers"
+        <p-select [options]="runnersUp()"
             [(ngModel)]="runnerUp"
+            [disabled]="!winner()"
             optionLabel="name"
             name="runnerUp"
             placeholder="Runner Up"
@@ -48,15 +47,16 @@
     <!-- Date -->
     <div class="mb-6">
         <p-datepicker [(ngModel)]="date"
+            [maxDate]="date()"
             name="date"
             placeholder="Date"
             class="w-full" />
     </div>
 
-    <button type="submit"
+    <p-button label="Submit" type="submit"
+        [fluid]="true"
         (click)="onSubmit()"
-        [disabled]="!winner || !game || !date"
-        class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit</button>
+        [disabled]="!winner() || !game() || !date()" />
 </form>
 
 
@@ -72,7 +72,6 @@
                 class="flex-auto"
                 autocomplete="off" />
         </div>
-        <button type="submit"
-            class="bg-green-500 hover:bg-green-600 text-white p-2 rounded-md w-full">Add Game</button>
+        <p-button label="Submit" type="submit" />
     </form>
 </p-dialog>

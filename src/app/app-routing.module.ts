@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ResultsComponent } from './results/results.component';
-import { NewRoundComponent } from './new-round/new-round.component';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './auth.guard';
+import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
-  { path: 'new-round', component: NewRoundComponent },
-  { path: 'results', component: ResultsComponent },
-  { path: '', redirectTo: '/results', pathMatch: 'full' }
+  { path: 'login', component: LoginComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: '', redirectTo: '/home', pathMatch: 'full' }
 ];
 
 @NgModule({

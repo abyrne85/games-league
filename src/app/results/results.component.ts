@@ -5,7 +5,6 @@ import { RoundCardComponent } from './round-card/round-card.component';
 import { LeagueTableComponent } from './league-table/league-table.component';
 import { forkJoin } from 'rxjs';
 import { GamesService } from '../games.service';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-results',
@@ -18,21 +17,18 @@ export class ResultsComponent implements OnInit {
     rounds: IRound[] = [];
     games: IGame[] = [];
     players: IPlayer[] = [];
-    
-    private _gamesService = inject(GamesService);
-    private _router = inject(Router);
 
-    
+    private _gamesService = inject(GamesService);
+
     ngOnInit(): void {
-      forkJoin({
-        games: this._gamesService.getGames(),
-        players: this._gamesService.getPlayers(),
-        rounds: this._gamesService.getRounds()
-      }).subscribe(({ games, players, rounds }) => {
-        this.games = games;
-        this.players = players;
-        this.rounds = rounds.reverse();
-        this._router.navigate(['/results']);
-      });
+        forkJoin({
+            games: this._gamesService.getGames(),
+            players: this._gamesService.getPlayers(),
+            rounds: this._gamesService.getRounds()
+        }).subscribe(({ games, players, rounds }) => {
+            this.games = games;
+            this.players = players;
+            this.rounds = rounds.reverse();
+        });
     }
 }

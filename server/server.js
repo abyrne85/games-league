@@ -24,6 +24,9 @@ const client = new MongoClient(uri, {
     }
 });
 
+// Simple shared password - in production, use environment variable
+const SHARED_PASSWORD = "bit_of_fun";
+
 let database;
 
 // Connect to MongoDB once when server starts
@@ -82,11 +85,24 @@ app.get('/api/rounds', async (req, res) => {
 
 app.post('/api/rounds', async (req, res) => {
     try {
-        const round = await database.collection("rounds").insertOne(req.body);
+        const result = await database.collection("rounds").insertOne(req.body);
+        const round = await database.collection("rounds").findOne({ _id: result.insertedId });
         res.json(round);
     } catch (error) {
         console.error('Error adding new round:', error);
         res.status(500).json({ error: 'Error adding new round' });
+    }
+});
+
+// Simple login endpoint
+app.post('/api/login', (req, res) => {
+    console.log(req.body);
+    const { password } = req.body;
+    
+    if (password === SHARED_PASSWORD) {
+        res.json({ success: true, message: 'Login successful' });
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid password' });
     }
 });
 

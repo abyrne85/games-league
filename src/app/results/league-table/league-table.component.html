@@ -1,18 +1,53 @@
-<div class="w-full bg-white shadow-md rounded-lg overflow-hidden">
-    <div class="bg-gray-100 flex flex-wrap">
-        <div class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">Player</div>
-        <div class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">Games Played</div>
-        <div class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">Wins</div>
-        <div class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">Runner Ups</div>
-        <div class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">Total Score</div>
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-800">League Table</h3>
     </div>
-    <div class="bg-white divide-y divide-gray-200">
-        <div *ngFor="let row of leagueTableEntries" class="flex flex-wrap hover:bg-gray-50">
-            <div class="px-2 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-1/5 overflow-hidden text-ellipsis">{{ row.player.name }}</div>
-            <div class="px-2 py-4 whitespace-nowrap text-sm text-gray-500 w-1/5 text-center">{{ row.games }}</div>
-            <div class="px-2 py-4 whitespace-nowrap text-sm text-gray-500 w-1/5 text-center">{{ row.wins }}</div>
-            <div class="px-2 py-4 whitespace-nowrap text-sm text-gray-500 w-1/5 text-center">{{ row.runnerUps }}</div>
-            <div class="px-2 py-4 whitespace-nowrap text-sm text-gray-500 w-1/5 text-center">{{ row.points }}</div>
-        </div>
-    </div>
+    
+    <p-table [value]="leagueTableEntries" styleClass="custom-table">
+        <ng-template #header>
+            <tr class="bg-gray-50">
+                <th class="text-left py-3 px-6 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    Player
+                </th>
+                <th class="text-center py-3 px-4 text-xs font-medium text-gray-600 uppercase tracking-wider">
+                    GP
+                </th>
+                <th class="text-center py-3 px-4 text-xs font-medium text-green-600 uppercase tracking-wider">
+                    W
+                </th>
+                <th class="text-center py-3 px-4 text-xs font-medium text-blue-600 uppercase tracking-wider">
+                    RU
+                </th>
+                <th class="text-center py-3 px-4 text-xs font-medium text-yellow-600 uppercase tracking-wider">
+                    PTS
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-entry let-i="rowIndex">
+            <tr [class.bg-yellow-50]="i === 0"
+                [class.bg-gray-50]="i === 1"
+                [class.bg-orange-50]="i === 2">
+                <td class="py-4 px-6 text-sm font-medium text-white">
+                    <div class="flex items-center">
+                        <span class="text-lg mr-2" *ngIf="i === 0">🥇</span>
+                        <span class="text-lg mr-2" *ngIf="i === 1">🥈</span>
+                        <span class="text-lg mr-2" *ngIf="i === 2">🥉</span>
+                        {{ entry.player.name }}
+                    </div>
+                </td>
+                <td class="py-4 px-4 text-sm text-gray-500 text-center">
+                    {{ entry.games }}
+                </td>
+                <td class="py-4 px-4 text-sm font-semibold text-green-600 text-center">
+                    {{ entry.wins }}
+                </td>
+                <td class="py-4 px-4 text-sm font-semibold text-blue-600 text-center">
+                    {{ entry.runnerUps }}
+                </td>
+                <td class="py-4 px-4 text-sm font-bold text-yellow-600 text-center">
+                    {{ entry.points }}
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 </div>

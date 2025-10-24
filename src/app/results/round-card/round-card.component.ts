@@ -15,12 +15,10 @@ export class RoundCardComponent implements OnInit {
     game!: IGame;
     winner!: IPlayer;
     runnerUp!: IPlayer; 
-    presentPlayers: IPlayer[] = [];
 
     ngOnInit(): void {
-        this.game = this.games.find(game => game.id === this.round.gameId)!;
-        this.winner = this.players.find(player => player.id === this.round.winnerId)!;
-        this.runnerUp = this.players.find(player => player.id === this.round.runnerUpId)!;
-        this.presentPlayers = this.players.filter(player => this.round.playerIds.includes(player.id!));
+        this.game = this.games.find(game => game._id === this.round.gameId)!;
+        this.winner = this.players.find(player => player._id === this.round.winnerId)!;
+        this.runnerUp = this.players.find(player => player._id === this.round.runnerUpId)!;
     }
 }
