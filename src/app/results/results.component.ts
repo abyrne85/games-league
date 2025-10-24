@@ -28,7 +28,7 @@ export class ResultsComponent implements OnInit {
         }).subscribe(({ games, players, rounds }) => {
             this.games = games;
             this.players = players;
-            this.rounds = rounds.reverse();
+            this.rounds = rounds.sort((a: IRound, b: IRound) => new Date(b.date).getTime() - new Date(a.date).getTime());
         });
     }
 }
