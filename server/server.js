@@ -31,6 +31,7 @@ let database;
 
 // Connect to MongoDB once when server starts
 async function connectToDatabase() {
+    console.log('URI', uri);
     try {
         console.log("Attempting to connect to MongoDB...");
         console.log("MONGODB_URI:", process.env.MONGODB_URI ? "Set" : "Not set");
