@@ -60,12 +60,11 @@
 </form>
 
 
-<p-dialog header="Edit Profile"
+<p-dialog header="Add Game"
     [modal]="true"
     [(visible)]="showAddGameModal"
     [style]="{ width: '25rem' }">
     <form [formGroup]="addGameForm" (ngSubmit)="onAddGame()">
-        <span class="p-text-secondary block mb-8">Add a new game.</span>
         <div class="flex items-center gap-4 mb-4">
             <input pInputText
                 formControlName="newGameName"
