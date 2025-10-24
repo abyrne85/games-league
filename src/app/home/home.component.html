@@ -1,20 +1,18 @@
-<div class="p-4">
-    <div class="container mx-auto">
-        <p-tabs [(value)]="tabIndex"
-            [lazy]="true"
-            *ngIf="!loading()">
-            <p-tablist> 
-                <p-tab [value]="1">Standings</p-tab>
-                <p-tab [value]="0">New Round</p-tab>
-            </p-tablist>
-            <p-tabpanels>
-                <p-tabpanel [value]="0">
-                    <app-new-round (roundAdded)="tabIndex = 1"></app-new-round>
-                </p-tabpanel>
-                <p-tabpanel [value]="1">
-                    <app-results *ngIf="tabIndex === 1"></app-results>
-                </p-tabpanel>
-            </p-tabpanels>
-        </p-tabs>
-    </div>
+<div class="container mx-auto">
+    <p-tabs [(value)]="tabIndex"
+        [lazy]="true"
+        *ngIf="!loading()">
+        <p-tablist>
+            <p-tab [value]="1">Standings</p-tab>
+            <p-tab [value]="0">New Round</p-tab>
+        </p-tablist>
+        <p-tabpanels>
+            <p-tabpanel [value]="0">
+                <app-new-round (roundAdded)="tabIndex = 1"></app-new-round>
+            </p-tabpanel>
+            <p-tabpanel [value]="1">
+                <app-results *ngIf="tabIndex === 1"></app-results>
+            </p-tabpanel>
+        </p-tabpanels>
+    </p-tabs>
 </div>
