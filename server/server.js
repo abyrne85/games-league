@@ -44,9 +44,6 @@ async function connectToDatabase() {
 
 app.get('/api/players', async (req, res) => {
     try {
-        if (!database) {
-            return res.status(503).json({ error: 'Database not connected' });
-        }
         const players = await database.collection("players").find({}).toArray();
         res.json(players);
     } catch (error) {
@@ -112,7 +109,6 @@ app.post('/api/rounds', async (req, res) => {
 
 // Simple login endpoint
 app.post('/api/login', (req, res) => {
-    console.log(req.body);
     const { password } = req.body;
     
     if (password === SHARED_PASSWORD) {
