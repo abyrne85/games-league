@@ -32,6 +32,8 @@ let database;
 // Connect to MongoDB once when server starts
 async function connectToDatabase() {
     try {
+        console.log("Attempting to connect to MongoDB...");
+        console.log("MONGODB_URI:", process.env.MONGODB_URI ? "Set" : "Not set");
         await client.connect();
         database = client.db("gamesboys");
         console.log("Connected to MongoDB successfully");
@@ -44,6 +46,9 @@ async function connectToDatabase() {
 
 app.get('/api/players', async (req, res) => {
     try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
         const players = await database.collection("players").find({}).toArray();
         res.json(players);
     } catch (error) {
