@@ -37,12 +37,16 @@ async function connectToDatabase() {
         console.log("Connected to MongoDB successfully");
     } catch (error) {
         console.error("Failed to connect to MongoDB:", error);
-        process.exit(1);
+        console.log("Server will continue running without database connection");
+        // Don't exit - let the server run and retry connection later
     }
 }
 
 app.get('/api/players', async (req, res) => {
     try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
         const players = await database.collection("players").find({}).toArray();
         res.json(players);
     } catch (error) {
@@ -53,6 +57,9 @@ app.get('/api/players', async (req, res) => {
 
 app.post('/api/games', async (req, res) => {
     try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
         const result = await database.collection("games").insertOne(req.body);
         const game = await database.collection("games").findOne({ _id: result.insertedId });
         console.log('Game added:', game);
@@ -65,6 +72,9 @@ app.post('/api/games', async (req, res) => {
 
 app.get('/api/games', async (req, res) => {
     try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
         const games = await database.collection("games").find({}).toArray();
         res.json(games);
     } catch (error) {
@@ -75,8 +85,11 @@ app.get('/api/games', async (req, res) => {
 
 app.get('/api/rounds', async (req, res) => {
     try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
         const rounds = await database.collection("rounds").find({}).toArray();
-        res.json(rounds);   
+        res.json(rounds);
     } catch (error) {
         console.error('Error reading rounds data:', error);
         res.status(500).json({ error: 'Error fetching rounds' });
@@ -85,6 +98,9 @@ app.get('/api/rounds', async (req, res) => {
 
 app.post('/api/rounds', async (req, res) => {
     try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
         const result = await database.collection("rounds").insertOne(req.body);
         const round = await database.collection("rounds").findOne({ _id: result.insertedId });
         res.json(round);
