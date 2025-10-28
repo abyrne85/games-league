@@ -16,7 +16,8 @@ export class ResultsComponent implements OnInit {
 
     rounds: IRound[] = [];
     games: IGame[] = [];
-    players: IPlayer[] = [];
+    players: IPlayer[] = [];    
+    groupedRounds: { [key: string]: IRound[] } = {};
 
     private _gamesService = inject(GamesService);
 
@@ -29,6 +30,17 @@ export class ResultsComponent implements OnInit {
             this.games = games;
             this.players = players;
             this.rounds = rounds.sort((a: IRound, b: IRound) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            // this.groupedRounds = this._groupRounds(rounds);
         });
+    }
+
+    private _groupRounds(rounds: IRound[]): { [key: string]: IRound[] } {
+        return rounds.reduce((acc: { [key: string]: IRound[] }, round: IRound) => {
+            const date = new Date(round.date);
+            const day = date.toLocaleDateString('en-US', { day: 'numeric' });
+            acc[day] = acc[day] || [];
+            acc[day].push(round);
+            return acc;
+        }, {});
     }
 }
