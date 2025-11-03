@@ -27,7 +27,6 @@ export class HomeComponent implements OnInit {
                 forkJoin({
                     games: this._gamesService.getGames(),
                     players: this._gamesService.getPlayers(),
-                    rounds: this._gamesService.getRounds()
                 }).subscribe(() => {
                     this.loading.set(false);
                 });

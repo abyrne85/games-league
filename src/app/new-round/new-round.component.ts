@@ -1,6 +1,6 @@
 import { Component, computed, EventEmitter, inject, OnInit, Output, Signal, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IGame, IPlayer, IRound } from '../models';
+import { IGame, ILeague, IPlayer, IRound } from '../models';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { forkJoin, map, Observable } from 'rxjs';
 import { GamesService } from '../games.service';
@@ -28,18 +28,25 @@ export class NewRoundComponent implements OnInit {
     game:WritableSignal<IGame | null> = signal(null);
     runnerUp:WritableSignal<IPlayer | null> = signal(null);
     date:WritableSignal<Date> = signal(new Date());
-    showAddGameModal = signal(false);
+    leagues:WritableSignal<ILeague[]> = signal([]);
+    selectedLeague:ILeague | undefined = undefined;
+    showAddGameModal = signal(false);   
     addGameForm = new FormGroup({
         newGameName: new FormControl('')
     });
 
     private _gamesService = inject(GamesService);
-    private _router = inject(Router);
 
     ngOnInit(): void {
         this._getGamesAndPlayers().subscribe(({ games, players }) => {
             this.games.set(games);
             this.players.set(players);
+        });
+        this._gamesService.getLeagues().subscribe((leagues) => {
+            this.leagues.set(leagues);
+            console.log('leagues', leagues);
+            this.selectedLeague = leagues[0];
+            console.log('selectedLeague', this.selectedLeague);
         });
     }
 
@@ -57,7 +64,8 @@ export class NewRoundComponent implements OnInit {
             winnerId: this.winner()?._id!,
             runnerUpId: this.runnerUp()?._id!,
             gameId: this.game()?._id!,
-            date: this.date().toISOString().split('T')[0]
+            date: this.date().toISOString().split('T')[0],
+            leagueId: this.selectedLeague?._id!
         };
 
         this._gamesService.addRound(round).subscribe(() => {
@@ -68,13 +76,7 @@ export class NewRoundComponent implements OnInit {
     private _getGamesAndPlayers(): Observable<{ games: IGame[]; players: IPlayer[]; }> {
         return forkJoin({
             games: this._gamesService.getGames(),
-            players: this._gamesService.getPlayers()
-        }).pipe(
-            map(({ games, players }) => {
-                this.games.set(games);
-                this.players.set(players);
-                return { games, players };
-            })
-        );
+            players: this._gamesService.getPlayers(),
+        });
     }
 }

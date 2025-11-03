@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IPlayer, IGame, IRound } from './models';
+import { IPlayer, IGame, IRound, ILeague } from './models';
 import { of, tap } from 'rxjs';
 
 @Injectable({
@@ -11,6 +11,15 @@ export class GamesService {
     private cachedPlayers: IPlayer[] | null = null;
     private cachedGames: IGame[] | null = null;
     private cachedRounds: IRound[] | null = null;
+    private cachedLeagues: ILeague[] | null = null;
+
+    getLeagues() {
+        return this.http.get<ILeague[]>('/api/leagues');
+    }
+
+    getLeagueById(id: string) {
+        return this.http.get<ILeague>(`/api/leagues/${id}`);
+    }
 
     getPlayers() {
         if (this.cachedPlayers) {

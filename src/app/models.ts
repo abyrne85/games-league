@@ -16,6 +16,7 @@ export interface IRound {
     runnerUpId?: number;
     gameId: number;
     date: string;
+    leagueId: number;
 }
 
 export interface ILeagueTableEntry {
@@ -24,4 +25,10 @@ export interface ILeagueTableEntry {
     games: number;
     wins: number;
     runnerUps: number;
+}
+
+export interface ILeague {
+    _id: number;
+    name: string;
+    rounds: IRound[];
 }

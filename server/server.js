@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const host = '0.0.0.0';
 const path = require('path');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -83,6 +83,49 @@ app.get('/api/games', async (req, res) => {
     } catch (error) {
         console.error('Error reading games data:', error);
         res.status(500).json({ error: 'Error fetching games' });
+    }
+});
+
+app.get('/api/leagues', async (req, res) => {
+    try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
+        const leagues = await database.collection("leagues").find({}).toArray();
+        res.json(leagues);
+    } catch (error) {
+        console.error('Error reading leagues data:', error);
+        res.status(500).json({ error: 'Error fetching leagues' });
+    }
+});
+
+app.get('/api/leagues/:leagueId', async (req, res) => {
+    try {
+        if (!database) {
+            return res.status(503).json({ error: 'Database not connected' });
+        }
+        // Convert leagueId string to ObjectId
+        const leagueObjectId = new ObjectId(req.params.leagueId);
+        const league = await database.collection("leagues").findOne({ _id: leagueObjectId });
+        
+        if (!league) {
+            return res.status(404).json({ error: 'League not found' });
+        }
+        
+        // Get rounds from the league's rounds array
+        let rounds = [];
+        if (league.rounds && Array.isArray(league.rounds) && league.rounds.length > 0) {
+            // Convert string IDs to ObjectIds
+            const roundObjectIds = league.rounds.map(id => new ObjectId(id));
+            rounds = await database.collection("rounds").find({ 
+                _id: { $in: roundObjectIds } 
+            }).toArray();
+        }
+        
+        res.json({ ...league, rounds });
+    } catch (error) {
+        console.error('Error reading league data:', error);
+        res.status(500).json({ error: 'Error fetching league' });
     }
 });
 

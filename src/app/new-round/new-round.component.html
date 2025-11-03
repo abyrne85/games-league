@@ -53,6 +53,16 @@
             class="w-full" />
     </div>
 
+    <!-- League -->
+    <div class="mb-6">
+        <p-select [options]="leagues()"
+            [(ngModel)]="selectedLeague"
+            optionLabel="name"
+            name="league"
+            placeholder="League"
+            class="w-full" />
+    </div>
+
     <p-button label="Submit" type="submit"
         [fluid]="true"
         (click)="onSubmit()"
