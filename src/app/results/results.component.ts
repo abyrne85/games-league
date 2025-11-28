@@ -27,8 +27,11 @@ export class ResultsComponent implements OnInit {
     ngOnInit(): void {
         this._gamesService.getLeagues().subscribe((leagues) => {
             this.leagues = leagues;
-            this.selectedLeagueId = leagues[0]._id.toString();
-            this.getLeagueRounds(this.selectedLeagueId);
+            const lastLeague = leagues.at(-1);
+            if (lastLeague) {
+                this.selectedLeagueId = lastLeague._id.toString();
+                this.getLeagueRounds(this.selectedLeagueId);
+            }
         });
     }
 
@@ -38,7 +41,6 @@ export class ResultsComponent implements OnInit {
             players: this._gamesService.getPlayers(),
             league: this._gamesService.getLeagueById(leagueId)
         }).subscribe(({ games, players, league }) => {
-            console.log('getLeagueRounds', league);
             this.games = games;
             this.players = players;
             this.rounds = league.rounds.sort((a: IRound, b: IRound) => new Date(b.date).getTime() - new Date(a.date).getTime());

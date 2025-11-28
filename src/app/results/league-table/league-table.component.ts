@@ -1,22 +1,27 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IRound, IPlayer, ILeagueTableEntry } from '../../models';
 import { TableModule } from 'primeng/table';
-import { GamesService } from 'src/app/games.service';
 @Component({
     selector: 'app-league-table',
     imports: [CommonModule, TableModule],
     templateUrl: './league-table.component.html',
     styleUrls: ['./league-table.component.scss']
 })
-export class LeagueTableComponent implements OnInit {
+export class LeagueTableComponent implements OnInit, OnChanges {
     @Input() rounds: IRound[] = [];
     @Input() players: IPlayer[] = [];
     leagueTableEntries: ILeagueTableEntry[] = [];
 
-    private _gamesService = inject(GamesService);
-
     ngOnInit(): void {
+        this._buildLeagueTable();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        this._buildLeagueTable();
+    }
+
+    private _buildLeagueTable() {
         this.leagueTableEntries = this.players.map(player => ({
             player,
             points: this._calculatePoints(player),

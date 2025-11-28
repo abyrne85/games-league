@@ -144,15 +144,71 @@ app.get('/api/rounds', async (req, res) => {
 
 app.post('/api/rounds', async (req, res) => {
     try {
+        console.log('req.body', req.body);
         if (!database) {
             return res.status(503).json({ error: 'Database not connected' });
         }
-        const result = await database.collection("rounds").insertOne(req.body);
-        const round = await database.collection("rounds").findOne({ _id: result.insertedId });
+        
+        // Helper function to safely convert to ObjectId
+        const toObjectId = (id) => {
+            if (!id) return null;
+            // If already an ObjectId, return as is
+            if (id instanceof ObjectId) return id;
+            // Convert to string and validate
+            const idStr = String(id);
+            if (ObjectId.isValid(idStr)) {
+                return new ObjectId(idStr);
+            }
+            throw new Error(`Invalid ObjectId: ${idStr}`);
+        };
+        
+        // Convert all ID fields to ObjectIds
+        const roundData = {
+            ...req.body,
+            playerIds: req.body.playerIds ? req.body.playerIds.map(id => toObjectId(id)) : [],
+            winnerId: toObjectId(req.body.winnerId),
+            runnerUpId: toObjectId(req.body.runnerUpId),
+            gameId: toObjectId(req.body.gameId),
+            leagueId: toObjectId(req.body.leagueId)
+        };
+        
+        console.log('roundData before insert:', {
+            ...roundData,
+            playerIds: roundData.playerIds.map(id => id.toString()),
+            winnerId: roundData.winnerId?.toString(),
+            runnerUpId: roundData.runnerUpId?.toString(),
+            gameId: roundData.gameId?.toString(),
+            leagueId: roundData.leagueId?.toString()
+        });
+        
+        const result = await database.collection("rounds").insertOne(roundData);
+        console.log('Insert result:', result);
+        
+        if (!result.insertedId) {
+            throw new Error('Failed to insert round - no insertedId returned');
+        }
+        
+        const round = await database.collection("rounds").findOne({ _id: result.insertedId });  
+        console.log('Retrieved round:', round);
+        
+        if (!round) {
+            throw new Error('Round was inserted but could not be retrieved');
+        }
+        
+        // Add the round ID to the league's rounds array
+        if (roundData.leagueId) {
+            await database.collection("leagues").updateOne(
+                { _id: roundData.leagueId },
+                { $push: { rounds: result.insertedId } }
+            );
+            console.log('Added round to league:', roundData.leagueId.toString());
+        }
+        
         res.json(round);
     } catch (error) {
         console.error('Error adding new round:', error);
-        res.status(500).json({ error: 'Error adding new round' });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ error: 'Error adding new round', message: error.message });
     }
 });
 

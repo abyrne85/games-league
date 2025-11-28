@@ -11,6 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Router } from '@angular/router';
 import { ListboxModule } from 'primeng/listbox';
 import { ButtonModule } from 'primeng/button';
+import { withXsrfConfiguration } from '@angular/common/http';
 @Component({
     selector: 'app-new-round',
     imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, DatePickerModule, DialogModule, InputTextModule, ListboxModule, ButtonModule],
@@ -44,9 +45,10 @@ export class NewRoundComponent implements OnInit {
         });
         this._gamesService.getLeagues().subscribe((leagues) => {
             this.leagues.set(leagues);
-            console.log('leagues', leagues);
-            this.selectedLeague = leagues[0];
-            console.log('selectedLeague', this.selectedLeague);
+            const lastLeague = leagues.at(-1);
+            if (lastLeague) {
+                this.selectedLeague = lastLeague;
+            }
         });
     }
 
@@ -68,6 +70,7 @@ export class NewRoundComponent implements OnInit {
             leagueId: this.selectedLeague?._id!
         };
 
+        console.log('round', round);
         this._gamesService.addRound(round).subscribe(() => {
             this.roundAdded.emit();
         });
