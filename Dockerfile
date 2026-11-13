@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18 as build
+FROM node:24 as build
 WORKDIR /app
 
 # Install Angular CLI globally
@@ -18,7 +18,7 @@ COPY . .
 RUN npm run build:prod
 
 # Production stage
-FROM node:18-slim
+FROM node:24-slim
 WORKDIR /app
 
 # Copy built assets from the build stage
