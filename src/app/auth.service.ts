@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class AuthService {
-    private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+    private isAuthenticatedSubject = new BehaviorSubject<boolean>(true);
     public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
     private readonly AUTH_KEY = 'games_auth';

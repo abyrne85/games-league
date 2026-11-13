@@ -5,6 +5,7 @@
         <p-tablist>
             <p-tab [value]="1">Standings</p-tab>
             <p-tab [value]="0">New Round</p-tab>
+            <p-tab [value]="2">Insights</p-tab>
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="0">
@@ -12,6 +13,9 @@
             </p-tabpanel>
             <p-tabpanel [value]="1">
                 <app-results *ngIf="tabIndex === 1"></app-results>
+            </p-tabpanel>
+            <p-tabpanel [value]="2">
+                <app-insights *ngIf="tabIndex === 2"></app-insights>
             </p-tabpanel>
         </p-tabpanels>
     </p-tabs>

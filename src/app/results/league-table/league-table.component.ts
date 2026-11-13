@@ -33,6 +33,7 @@ export class LeagueTableComponent implements OnInit, OnChanges {
     }
 
     private _calculateGamesPlayed(player: IPlayer) {
+        console.log('Calculating games played for player:', player.name);
         let games = 0;
         this.rounds.forEach((round) => {
             if(round.playerIds.includes(player._id)) {
