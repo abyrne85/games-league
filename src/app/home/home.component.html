@@ -3,7 +3,8 @@
         <p-progress-spinner strokeWidth="4" ariaLabel="Loading" styleClass="w-12 h-12"></p-progress-spinner>
         <span>Loading games and players…</span>
     </div>
-    <p-tabs [(value)]="tabIndex"
+    <p-tabs [value]="tabIndex"
+        (valueChange)="selectTab($event)"
         [lazy]="true"
         *ngIf="!loading()">
         <p-tablist>
@@ -13,7 +14,7 @@
         </p-tablist>
         <p-tabpanels>
             <p-tabpanel [value]="0">
-                <app-new-round (roundAdded)="tabIndex = 1"></app-new-round>
+                <app-new-round (roundAdded)="selectTab(1)"></app-new-round>
             </p-tabpanel>
             <p-tabpanel [value]="1">
                 <app-results *ngIf="tabIndex === 1"></app-results>
