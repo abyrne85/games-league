@@ -11,6 +11,8 @@
         <span>Loading results…</span>
     </div>
 
+    <p *ngIf="!loading && rounds.length === 0" class="text-gray-500">No rounds yet for this selection.</p>
+
     <app-league-table *ngIf="rounds.length > 0"
         [rounds]="rounds"
         [players]="players"></app-league-table>
