@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -10,6 +10,7 @@ import { IGame, ILeague, IPlayer, IRound } from '../models';
 import { LeagueTableComponent } from '../results/league-table/league-table.component';
 import { InsightsService } from './insights.service';
 
+const ALL_TIME = 'all';
 const PALETTE = ['#2563eb', '#16a34a', '#dc2626', '#d97706', '#7c3aed', '#0891b2', '#db2777', '#65a30d', '#475569', '#ea580c'];
 
 @Component({
@@ -29,6 +30,8 @@ export class InsightsComponent implements OnInit {
     private _rounds = signal<IRound[]>([]);
     private _players = signal<IPlayer[]>([]);
     private _games = signal<IGame[]>([]);
+    /** IDs of every round that belongs to a league. */
+    private _leagueRoundIds = new Set<string>();
 
     rounds = this._rounds.asReadonly();
     players = this._players.asReadonly();
@@ -51,18 +54,6 @@ export class InsightsComponent implements OnInit {
         };
     });
 
-    winRateChart = computed(() => {
-        const sorted = [...this.stats()].sort((a, b) => b.winRate - a.winRate);
-        return {
-            labels: sorted.map(s => s.player.name),
-            datasets: [{
-                label: 'Win rate (%)',
-                data: sorted.map(s => Math.round(s.winRate * 10) / 10),
-                backgroundColor: '#16a34a',
-            }],
-        };
-    });
-
     podiumChart = computed(() => {
         const sorted = [...this.stats()].sort((a, b) => b.points - a.points);
         return {
@@ -70,10 +61,11 @@ export class InsightsComponent implements OnInit {
             datasets: [
                 { label: 'Wins', data: sorted.map(s => s.wins), backgroundColor: '#16a34a' },
                 { label: 'Runner-up', data: sorted.map(s => s.runnerUps), backgroundColor: '#2563eb' },
-                { label: 'Other', data: sorted.map(s => s.others), backgroundColor: '#cbd5e1' },
             ],
         };
     });
+
+    gameLeaders = computed(() => this._insights.gameLeaders(this._rounds(), this._games(), this._players()));
 
     gamesChart = computed(() => {
         const counts = this._insights.gameCounts(this._rounds(), this._games());
@@ -88,7 +80,6 @@ export class InsightsComponent implements OnInit {
     });
 
     lineOptions = { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Points' } } } };
-    winRateOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: 100 } } };
     stackedOptions = { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } } } };
     gamesOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } };
 
@@ -99,8 +90,14 @@ export class InsightsComponent implements OnInit {
             games: this._gamesService.getGames(),
         }).subscribe(({ leagues, players, games }) => {
             this._players.set(players);
+            // /api/leagues returns each league's rounds as an array of IDs.
+            this._leagueRoundIds = new Set(
+                leagues.flatMap((l: ILeague) => (l.rounds as unknown[]).map(r => String((r as { _id?: unknown })._id ?? r))));
             this._games.set(games);
-            this.leagueOptions.set(leagues.map((l: ILeague) => ({ _id: String(l._id), name: l.name })));
+            this.leagueOptions.set([
+                { _id: ALL_TIME, name: 'All time' },
+                ...leagues.map((l: ILeague) => ({ _id: String(l._id), name: l.name })),
+            ]);
             const lastLeague = leagues.at(-1);
             if (lastLeague) {
                 this.selectedLeagueId = String(lastLeague._id);
@@ -113,8 +110,12 @@ export class InsightsComponent implements OnInit {
 
     onLeagueChange(): void {
         this.loading.set(true);
-        this._gamesService.getLeagueById(this.selectedLeagueId).subscribe(league => {
-            this._rounds.set(league.rounds);
+        const rounds$: Observable<IRound[]> = this.selectedLeagueId === ALL_TIME
+            // Only count rounds that belong to a league, as each league view does.
+            ? this._gamesService.getRounds().pipe(map(rounds => rounds.filter(r => this._leagueRoundIds.has(String(r._id)))))
+            : this._gamesService.getLeagueById(this.selectedLeagueId).pipe(map(league => league.rounds));
+        rounds$.subscribe(rounds => {
+            this._rounds.set(rounds);
             this.loading.set(false);
         });
     }

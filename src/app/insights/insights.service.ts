@@ -6,14 +6,20 @@ export interface IPlayerStat {
     games: number;
     wins: number;
     runnerUps: number;
-    others: number;
     points: number;
-    winRate: number;
 }
 
 export interface IGameCount {
     game: IGame;
     count: number;
+}
+
+export interface IGameLeader {
+    game: IGame;
+    rounds: number;
+    /** Players tied for most wins at this game. */
+    leaders: IPlayer[];
+    wins: number;
 }
 
 export interface ISeries {
@@ -53,9 +59,7 @@ export class InsightsService {
                     games: played.length,
                     wins,
                     runnerUps,
-                    others: played.length - wins - runnerUps,
                     points: played.reduce((sum, r) => sum + this._points(r, pid), 0),
-                    winRate: played.length ? (wins / played.length) * 100 : 0,
                 };
             })
             .filter(s => s.games > 0);
@@ -82,5 +86,24 @@ export class InsightsService {
             .map(game => ({ game, count: counts.get(this._id(game._id)) ?? 0 }))
             .filter(g => g.count > 0)
             .sort((a, b) => b.count - a.count);
+    }
+
+    /** For each game, who has won it most. Ties list every tied player. */
+    gameLeaders(rounds: IRound[], games: IGame[], players: IPlayer[]): IGameLeader[] {
+        return games
+            .map(game => {
+                const gid = this._id(game._id);
+                const gameRounds = rounds.filter(r => this._id(r.gameId) === gid);
+                const winsByPlayer = new Map<string, number>();
+                gameRounds.forEach(r => {
+                    const w = this._id(r.winnerId);
+                    winsByPlayer.set(w, (winsByPlayer.get(w) ?? 0) + 1);
+                });
+                const wins = Math.max(0, ...winsByPlayer.values());
+                const leaders = players.filter(p => wins > 0 && winsByPlayer.get(this._id(p._id)) === wins);
+                return { game, rounds: gameRounds.length, leaders, wins };
+            })
+            .filter(g => g.rounds > 0)
+            .sort((a, b) => b.rounds - a.rounds);
     }
 }
