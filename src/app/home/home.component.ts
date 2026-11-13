@@ -6,11 +6,12 @@ import { NewRoundComponent } from '../new-round/new-round.component';
 import { ResultsComponent } from '../results/results.component';
 import { TabsModule } from 'primeng/tabs';
 import { CommonModule } from '@angular/common';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InsightsComponent } from '../insights/insights.component';
 
 @Component({
     selector: 'app-home',
-    imports: [NewRoundComponent, ResultsComponent, CommonModule, TabsModule, InsightsComponent],
+    imports: [NewRoundComponent, ResultsComponent, CommonModule, TabsModule, InsightsComponent, ProgressSpinnerModule],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })

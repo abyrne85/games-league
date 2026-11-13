@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { ChartModule } from 'primeng/chart';
 import { SelectModule } from 'primeng/select';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { GamesService } from '../games.service';
 import { IGame, ILeague, IPlayer, IRound } from '../models';
 import { LeagueTableComponent } from '../results/league-table/league-table.component';
@@ -13,7 +14,7 @@ const PALETTE = ['#2563eb', '#16a34a', '#dc2626', '#d97706', '#7c3aed', '#0891b2
 
 @Component({
     selector: 'app-insights',
-    imports: [CommonModule, FormsModule, ChartModule, SelectModule, LeagueTableComponent],
+    imports: [CommonModule, FormsModule, ChartModule, SelectModule, ProgressSpinnerModule, LeagueTableComponent],
     templateUrl: './insights.component.html',
     styleUrl: './insights.component.scss'
 })

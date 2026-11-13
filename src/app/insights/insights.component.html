@@ -5,7 +5,10 @@
         optionValue="_id"
         (onChange)="onLeagueChange()"></p-select>
 
-    <p *ngIf="loading()" class="text-gray-500">Loading…</p>
+    <div *ngIf="loading()" class="flex flex-col items-center justify-center gap-3 py-16 text-gray-500">
+        <p-progress-spinner strokeWidth="4" ariaLabel="Loading" styleClass="w-12 h-12"></p-progress-spinner>
+        <span>Loading insights…</span>
+    </div>
     <p *ngIf="!loading() && !hasData()" class="text-gray-500">No rounds yet for this selection.</p>
 
     <ng-container *ngIf="!loading() && hasData()">

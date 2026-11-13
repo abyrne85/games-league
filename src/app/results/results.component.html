@@ -6,6 +6,11 @@
         optionValue="_id"
         (onChange)="getLeagueRounds(selectedLeagueId)"></p-select>
 
+    <div *ngIf="loading" class="flex flex-col items-center justify-center gap-3 py-16 text-gray-500">
+        <p-progress-spinner strokeWidth="4" ariaLabel="Loading" styleClass="w-12 h-12"></p-progress-spinner>
+        <span>Loading results…</span>
+    </div>
+
     <app-league-table *ngIf="rounds.length > 0"
         [rounds]="rounds"
         [players]="players"></app-league-table>

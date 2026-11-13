@@ -7,10 +7,11 @@ import { forkJoin } from 'rxjs';
 import { GamesService } from '../games.service';
 import { SelectModule } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
     selector: 'app-results',
-    imports: [CommonModule, RoundCardComponent, LeagueTableComponent, SelectModule, FormsModule],
+    imports: [CommonModule, RoundCardComponent, LeagueTableComponent, SelectModule, FormsModule, ProgressSpinnerModule],
     templateUrl: './results.component.html',
     styleUrls: ['./results.component.scss']
 })
@@ -22,6 +23,7 @@ export class ResultsComponent implements OnInit {
     groupedRounds: { [key: string]: IRound[] } = {};
     leagues: ILeague[] = [];
     selectedLeagueId: string = '';
+    loading = true;
     private _gamesService = inject(GamesService);
 
     ngOnInit(): void {
@@ -31,11 +33,14 @@ export class ResultsComponent implements OnInit {
             if (lastLeague) {
                 this.selectedLeagueId = lastLeague._id.toString();
                 this.getLeagueRounds(this.selectedLeagueId);
+            } else {
+                this.loading = false;
             }
         });
     }
 
     getLeagueRounds(leagueId: string) {
+        this.loading = true;
         forkJoin({
             games: this._gamesService.getGames(),
             players: this._gamesService.getPlayers(),
@@ -45,6 +50,7 @@ export class ResultsComponent implements OnInit {
             this.players = players;
             this.rounds = league.rounds.sort((a: IRound, b: IRound) => new Date(b.date).getTime() - new Date(a.date).getTime());
             this.groupedRounds = this._groupRounds(this.rounds);
+            this.loading = false;
         });
     }
 
